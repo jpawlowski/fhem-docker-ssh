@@ -1,0 +1,17 @@
+version: '2'
+
+services:
+    fhem-ssh:
+        restart: always
+        expose:
+            - "22"
+        ports:
+            - "7073:22"
+        build: .
+        environment:
+            - FHEM_HOST=fhem
+            - FHEM_PORT=7072
+            - FHEM_PASSWORD=mysecretpassword
+        volumes:
+            - ./config/sshd/:/etc/ssh/
+            - ./config/authorized_keys:/root/.ssh/authorized_keys

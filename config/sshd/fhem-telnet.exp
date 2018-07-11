@@ -1,0 +1,78 @@
+#!/usr/bin/expect -f
+
+set HOST [lindex $argv 0]
+set PORT [lindex $argv 1]
+set PASSWORD [lindex $argv 2]
+set COMMAND [lindex $argv 3]
+set timeout 10
+
+spawn -noecho telnet $HOST $PORT
+match_max 10000000
+log_user 0
+
+if { $PASSWORD != "-" } {
+expect -exact "\r\r
+Entering character mode\r\r
+Escape character is '^\]'.\r\r
+\r
+Password: "
+send -- "$PASSWORD\r"
+expect -exact "\r
+Entering line mode\r
+Escape character is '^C'.\r
+\r\r
+\r\r
+"
+}
+
+send -- "$COMMAND\r"
+
+# start interactive session
+if { $COMMAND == "" } {
+  interact
+
+# open permanent channel
+} elseif { [regexp -nocase "^(inform|iowrite).*" $COMMAND] } {
+  expect "$COMMAND\r"
+  interact
+
+# run one-time command
+} else {
+  # # FIXME does not work with FHEM because commands without output would be stuck...
+  # # ... but we want this to avoid the output of our sent commands back to the user
+  # # to improve scriptability
+  #
+  # # OPTION 1: only works for FHEM commands with multi-line output,
+  # #           but longer output is still incomplete :-(
+  # expect -re "\n(.*)\r"
+  # log_user 1
+  # puts "$expect_out(0,string)"
+  # log_user 0
+  # send -- "quit\r"
+  # expect eof
+
+  # # OPTION 2: only works for FHEM command without output
+  # expect {
+  #   # no return
+  #   -exact "\n" {
+  #     send -- "quit\r"
+  #     expect eof
+  #   }
+  #
+  #   # command has return text
+  #   -re "\n(.*)\r" { #TODO longer output is incomplete
+  #     log_user 1
+  #     puts "$expect_out(0,string)"
+  #     log_user 0
+  #     send -- "quit\r"
+  #     expect eof
+  #   }
+  # }
+
+  # Fallback option that works with complete output
+  # but copies sent FHEM commands to the user... :-(
+  expect "$COMMAND\r"
+  log_user 1
+  send -- "quit\r"
+  expect *eof
+}
