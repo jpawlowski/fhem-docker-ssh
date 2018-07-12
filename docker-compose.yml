@@ -15,3 +15,4 @@ services:
         volumes:
             - ./config/sshd/:/etc/ssh/
             - ./config/authorized_keys:/root/.ssh/authorized_keys
+            - ./fhem/fhem.pl/:/opt/fhem/fhem.pl/:ro
