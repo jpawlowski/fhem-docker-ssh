@@ -13,6 +13,6 @@ services:
             - FHEM_PORT=7072
             - FHEM_PASSWORD=mysecretpassword
         volumes:
-            - ./config/sshd/:/etc/ssh/
-            - ./config/authorized_keys:/root/.ssh/authorized_keys
+            - ./config/sshd/:/etc/ssh/:ro
+            - ./config/authorized_keys:/root/.ssh/authorized_keys:ro
             - ./fhem/fhem.pl/:/opt/fhem/fhem.pl/:ro
