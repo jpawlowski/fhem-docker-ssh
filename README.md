@@ -22,13 +22,5 @@ Start the stack using this command:
 docker-compose up -d
 ``
 
-## Pre-Built on Docker Hub
-
-https://hub.docker.com/r/jpsn/fhem-ssh/
-
-``
-docker pull jpsn/fhem-ssh
-``
-
 ## License
 See LICENSE file.

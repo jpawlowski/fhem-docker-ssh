@@ -4,9 +4,11 @@ LABEL maintainer="Julian Pawlowski <julian.pawlowski@gmail.com>"
 ENV TERM xterm
 
 RUN apk add --no-cache --virtual .run-deps \
+bash \
 busybox-extras \
 expect \
-openssh
+openssh \
+perl
 
 RUN sed -i s,root,fhem,g /etc/passwd
 RUN sed -i s,^fhem.*,fhem:*:0:0::/root:/bin/ash,g /etc/passwd
